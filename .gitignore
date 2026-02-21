@@ -1,5 +1,22 @@
+# Ignore pipeline scripts
 Dockerfile
 Jenkinsfile
 k8s-deploy.yml
 task.yml
-target
+
+# Ignore Maven build output
+target/
+
+# Ignore IDE settings
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore SonarQube reports
+sonar-report/
