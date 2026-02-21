@@ -2,3 +2,4 @@ Dockerfile
 Jenkinsfile
 k8s-deploy.yml
 task.yml
+target
