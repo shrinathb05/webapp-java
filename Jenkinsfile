@@ -70,26 +70,20 @@ pipeline {
             }
         }
 
-        stage('5. Security: Dependency Scan') {
+        stage('5. OWASP Dependency Check') {
             steps {
-                // Using the environment variable for the Credentials ID
-                withCredentials([string(credentialsId: "${env.NVD_CRED_ID}", variable: 'NVD_KEY')]) {
+                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
                     script {
-                        echo "🔍 Scanning 3rd party libraries for vulnerabilities..."
-                        dependencyCheck additionalArguments: """
-                            --scan ./ 
-                            --out target 
-                            --format HTML 
-                            --format XML
-                            --nvdApiKey ${NVD_KEY}
-                            --failOnCVSS 7
-                        """, odcInstallation: "${env.OWASP_TOOL_NAME}"
+                        // We use single quotes for the string to prevent Groovy interpolation
+                        // and let the plugin/shell handle the variable safely.
+                        dependencyCheck additionalArguments: '--scan ./ --out target --format HTML --format XML --nvdApiKey ' + NVD_KEY + ' --failOnCVSS 8', 
+                        odcInstallation: "${env.OWASP_TOOL_NAME}"
                     }
                 }
             }
             post {
-                always {
-                    dependencyCheckPublisher pattern: "${env.SCAN_REPORT}"
+                always { 
+                    dependencyCheckPublisher pattern: 'target/dependency-check-report.xml' 
                 }
             }
         }
