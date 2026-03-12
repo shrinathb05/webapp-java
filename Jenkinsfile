@@ -119,19 +119,19 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            mail to: 'shrinath7028@gmail.com',
-                 subject: "✅ Deployment Successful: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: """Great news! The application was deployed successfully to Tomcat.
-                          Build URL: ${env.BUILD_URL}
-                          SonarQube: http://<SONAR_IP>:9000"""
-        }
-        failure {
-            mail to: 'shrinath7028@gmail.com',
-                 subject: "❌ Deployment Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: """The pipeline failed. Please check the logs immediately.
-                          Build URL: ${env.BUILD_URL}"""
-        }
-    }
+    // post {
+    //     success {
+    //         mail to: 'shrinath7028@gmail.com',
+    //              subject: "✅ Deployment Successful: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+    //              body: """Great news! The application was deployed successfully to Tomcat.
+    //                       Build URL: ${env.BUILD_URL}
+    //                       SonarQube: http://<SONAR_IP>:9000"""
+    //     }
+    //     failure {
+    //         mail to: 'shrinath7028@gmail.com',
+    //              subject: "❌ Deployment Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+    //              body: """The pipeline failed. Please check the logs immediately.
+    //                       Build URL: ${env.BUILD_URL}"""
+    //     }
+    // }
 }
