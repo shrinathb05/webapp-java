@@ -101,7 +101,7 @@ pipeline {
                 archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
             }
         }
-        stage('Docker Image Build') {
+        stage('8. Docker Build & Deploy') {
             steps {
                 script {
                     // 1. Build the image using the .war from the 'target' folder
