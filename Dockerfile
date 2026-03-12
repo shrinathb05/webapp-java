@@ -1,7 +1,9 @@
-FROM tomcat:8.0.20-jre8
+FROM eclipse-temurin:21-jdk-noble
 
-MAINTAINER Ashok <ashok@oracle.com>
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-EXPOSE 8080
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-COPY target/maven-web-app.war /usr/local/tomcat/webapps/maven-web-app.war
+EXPOSE 8081
+
+CMD ["catalina.sh", "run"]

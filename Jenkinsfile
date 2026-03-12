@@ -101,6 +101,22 @@ pipeline {
                 archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
             }
         }
+        stage('Docker Image Build') {
+            steps {
+                script {
+                    // 1. Build the image using the .war from the 'target' folder
+                    sh 'docker build -t shrinath05/project:javawebapp-0.1 .'
+
+                    // 2. Stop and remove the old container if it's running
+                    sh 'docker stop tomcatapp || true'
+                    sh 'docker rm tomcatapp || true'
+
+                    // 3. Run the new container
+                    // Maps host port 8081 to Tomcat port 8080
+                    sh 'docker run -d -p 8081:8080 --name tomcatapp shrinath05/project:javawebapp-0.1'
+                }
+            }
+        }
     }
 
     post {
