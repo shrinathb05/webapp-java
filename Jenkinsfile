@@ -121,4 +121,34 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            emailext (
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has completed successfully.</p>
+                    <p>Check the console output at: <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>
+                    <p><b>Deployment Status:</b> App is live on the Agent Server.</p>""",
+                to: 'shrinath7028@gmail.com', // Replace with your email
+                from: 'jenkins@yourbusiness.com',
+                replyTo: 'jenkins@yourbusiness.com',
+                mimeType: 'text/html'
+            )
+        }
+        failure {
+            emailext (
+                subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' failed at one of the 8 stages.</p>
+                    <p>Review the logs here: <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>
+                    <p>Please check the SonarQube or OWASP logs for details.</p>""",
+                to: 'shri@example.com', // Replace with your email
+                from: 'jenkins@yourbusiness.com',
+                replyTo: 'jenkins@yourbusiness.com',
+                mimeType: 'text/html'
+            )
+        }
+        always {
+            cleanWs() // Keeps your Agent Server disk space clean
+        }
+    }
 }
