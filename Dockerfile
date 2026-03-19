@@ -1,7 +1,9 @@
-FROM tomcat:8.0.20-jre8
+FROM tomcat:10.1-jdk17-temurin-jammy
 
-MAINTAINER Ashok <ashok@oracle.com>
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
 
-COPY target/maven-web-app.war /usr/local/tomcat/webapps/maven-web-app.war
+CMD ["catalina.sh", "run"]
