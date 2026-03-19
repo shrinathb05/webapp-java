@@ -1,5 +1,4 @@
 # Ignore pipeline scripts
-Jenkinsfile
 k8s-deploy.yml
 task.yml
 
