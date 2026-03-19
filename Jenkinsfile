@@ -101,12 +101,13 @@ pipeline {
                         credentialsId: 'docker-hub-login', 
                         usernameVariable: 'USER', 
                         passwordVariable: 'PASS'
-                    )])
+                    )]) {
                         echo "Docker image building........"
                         sh 'docker build -t shrinath05/project:javawebapp-0.3 .'
 
                         echo "Logging into dockerhub .........."
                         sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
+                    }    
                 }
             }
         }
