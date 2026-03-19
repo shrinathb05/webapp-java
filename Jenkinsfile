@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         GIT_REPO = "https://github.com/shrinathb05/webapp-java.git"
-        GIT_BRANCH = "dev"
+        GIT_BRANCH = "main"
 
         SONAR_SERVER_NAME = "sonar-server"
         OWASP_TOOL_NAME = "owasp-dp-Check"
@@ -163,14 +163,14 @@ pipeline {
             emailext (
                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "Build successful! Check it here: ${env.BUILD_URL}",
-                to: 'shrinath7028@gmail.com' // CHANGE THIS
+                to: 'email123@gmail.com' // CHANGE THIS
             )
         }
         failure {
             emailext (
                 subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "Pipeline failed. Check the logs: ${env.BUILD_URL}",
-                to: 'shrinath7028@gmail.com' // CHANGE THIS
+                to: 'semail123@gmail.com' // CHANGE THIS
             )
         }
     }
