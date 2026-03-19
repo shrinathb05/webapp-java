@@ -334,3 +334,43 @@ Now we can finally create the **Pipeline Job**. We will write a `Jenkinsfile` th
 
 **Would you like me to provide the full Jenkinsfile script for these 8 stages to test your setup?**
 
+----------------------------------------------------------------------------------------------------------------------------------
+
+STEP 4
+
+To include **Stage 5: OWASP Dependency Check** in your pipeline, you need to configure it in two places: once on the **Jenkins Master** (for the plugin) and once on the **Agent Server** (where the actual scanning happens).
+
+Since you are building this from scratch, here is the most stable way to set it up.
+
+---
+
+### **Step 1: Install the Plugin (Jenkins Master)**
+1.  Go to **Manage Jenkins** > **Plugins** > **Available Plugins**.
+2.  Search for **OWASP Dependency-Check**.
+3.  Install it and **Restart Jenkins**.
+
+---
+
+### **Step 2: Configure the Scanner Tool (Jenkins Master)**
+Jenkins needs to know where to find the scanner or how to install it automatically on your Agent.
+
+1.  Go to **Manage Jenkins** > **Tools**.
+2.  Scroll down to **Dependency-Check installations**.
+3.  Click **Add Dependency-Check**:
+    * **Name:** `DP-Check` (Remember this name; you will use it in your Jenkinsfile).
+    * Check **Install automatically**.
+    * Select **Install from github.com**.
+4.  Click **Save**.
+
+---
+
+### **Step 3: Prepare the Agent Server (Worker Node)**
+The OWASP scanner downloads a huge database of vulnerabilities (NVD) the first time it runs. To prevent it from failing due to memory or disk issues:
+
+1.  **Ensure unzip is installed:**
+    ```bash
+    sudo apt install unzip -y
+    ```
+2.  **Storage Note:** The first scan will download about 500MB–1GB of data to the `/home/ubuntu/jenkins/tools` directory on your agent. Make sure you have enough disk space.
+
+---
