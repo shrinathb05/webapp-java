@@ -96,8 +96,27 @@ pipeline {
 
         stage('Docker Image Build') {
             steps {
-                echo "Docker image building........"
-                sh 'docker build -t shrinath05/project:javawebapp-0.2 .'
+                script {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'docker-hub-login', 
+                        usernameVariable: 'USER', 
+                        passwordVariable: 'PASS'
+                    )])
+                        echo "Docker image building........"
+                        sh 'docker build -t shrinath05/project:javawebapp-0.3 .'
+
+                        echo "Logging into dockerhub .........."
+                        sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
+                }
+            }
+        }
+        
+        stage('Image Push DockerHub') {
+            steps {
+                script {
+                    echo "Pushing image to dockerhub......"
+                    sh "docker push shrinath05/project:javawebapp-0.3"
+                }
             }
         }
     }
