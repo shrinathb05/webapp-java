@@ -98,7 +98,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(
-                        credentialsId: 'docker-hub-login', 
+                        credentialsId: 'docker_token', 
                         usernameVariable: 'USER', 
                         passwordVariable: 'PASS'
                     )]) {
@@ -106,7 +106,7 @@ pipeline {
                         sh 'docker build -t shrinath05/project:javawebapp-0.3 .'
 
                         echo "Logging into dockerhub .........."
-                        sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
+                        sh "echo $PASS | docker login -u $USER --password-stdin"
                     }    
                 }
             }
