@@ -119,11 +119,13 @@ pipeline {
                         usernameVariable: 'USER', 
                         passwordVariable: 'PASS'
                     )]) {
-                            echo "Docker image building........"
-                            sh 'docker build -t ${env.IMAGE_NAME} .'
-                            
-                            echo "Logging into dockerhub .........."
-                            sh "echo $PASS | docker login -u $USER --password-stdin"
+                            sh """
+                                echo "Docker image building........"
+                                docker build -t ${env.IMAGE_NAME} .
+                                
+                                echo "Logging into dockerhub .........."
+                                echo $PASS | docker login -u $USER --password-stdin
+                            """
                         }
                     }
                 }
@@ -144,11 +146,20 @@ pipeline {
             steps {
                 dir("${WORK_DIR}") {
                     script {
-                        echo "Pushing image to dockerhub......"
-                        sh "docker push ${env.IMAGE_NAME}"
-                        
-                        // It removes all images that are not being used by a running container
-                        sh "docker image prune -a -f"
+                        withCredentials([usernamePassword(
+                        credentialsId: 'docker_token', 
+                        usernameVariable: 'USER', 
+                        passwordVariable: 'PASS'
+                    )]) {
+                            sh """
+                                echo "Pushing image to dockerhub......"
+                                docker push ${env.IMAGE_NAME}
+                                
+                                // It removes all images that are not being used by a running container
+                                docker image prune -a -f
+                                docker logout
+                            """
+                        }  
                     }
                 }
             }
