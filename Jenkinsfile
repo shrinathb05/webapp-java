@@ -17,6 +17,9 @@ pipeline {
         SCAN_REPORT = "target/dependency-check-report.xml"
         WORK_DIR = "/home/ubuntu/var/work/javawebapp"
         NVD_CRED_ID = 'nvd-api-key'
+
+        APP_VERSION = "0.4" 
+        IMAGE_NAME = "shrinath05/project:javawebapp-${APP_VERSION}"
     }
 
     stages {
@@ -107,7 +110,7 @@ pipeline {
             }
         }
         
-        stage('Docker Image Build') {
+        stage('Docker Build Image') {
             steps {
                 dir("${WORK_DIR}") {
                     script {
@@ -117,7 +120,7 @@ pipeline {
                         passwordVariable: 'PASS'
                     )]) {
                             echo "Docker image building........"
-                            sh 'docker build -t shrinath05/project:javawebapp-0.3 .'
+                            sh 'docker build -t ${env.IMAGE_NAME} .'
                             
                             echo "Logging into dockerhub .........."
                             sh "echo $PASS | docker login -u $USER --password-stdin"
@@ -132,17 +135,20 @@ pipeline {
                 dir("${WORK_DIR}") {
                     // --exit-code 1 tells Jenkins to FAIL the build if vulnerabilities are found
                     // --severity CRITICAL ensures we only stop for the worst bugs
-                    sh "trivy image --exit-code 1 --severity CRITICAL shrinath05/project:javawebapp-0.3"
+                    sh "trivy image --exit-code 1 --severity CRITICAL ${env.IMAGE_NAME}"
                 }
             }
         }
         
-        stage('Push Image DockerHub') {
+        stage('Docker Image Push') {
             steps {
                 dir("${WORK_DIR}") {
                     script {
                         echo "Pushing image to dockerhub......"
-                        sh "docker push shrinath05/project:javawebapp-0.3"
+                        sh "docker push ${env.IMAGE_NAME}"
+                        
+                        // It removes all images that are not being used by a running container
+                        sh "docker image prune -a -f"
                     }
                 }
             }
