@@ -155,7 +155,7 @@ pipeline {
                                 echo "Pushing image to dockerhub......"
                                 docker push ${env.IMAGE_NAME}
                                 
-                                // It removes all images that are not being used by a running container
+                                # It removes all images that are not being used by a running container
                                 docker image prune -a -f
                                 docker logout
                             """
