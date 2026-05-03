@@ -169,14 +169,14 @@ https://templatemo.com/tm-520-highway
                             <h2>Latest Gallery</h2>
                         </div>
                         <ul>
-                            <li><a href="#"></a><img src="img/latest_gallery_1.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_2.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_3.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_4.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_5.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_6.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_7.png" alt=""></a></li>
-                            <li><a href="#"></a><img src="img/latest_gallery_8.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_1.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_2.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_3.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_4.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_5.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_6.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_7.png" alt=""></a></li>
+                            <li><a href="#"><img src="img/latest_gallery_8.png" alt=""></a></li>
                         </ul>
                     </div>
                 </div>

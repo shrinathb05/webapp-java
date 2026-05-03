@@ -52,7 +52,6 @@ https://templatemo.com/tm-520-highway
         </div>
         <video autoplay="" loop="" muted>
             <source src="highway-loop.mp4" type="video/mp4" />
-            <track kind="captions" label="English" srclang="en" src="" default>
         </video>
     </div>
 
@@ -63,7 +62,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_4.png"
+                            <a href="img/big_portfolio_item_4.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -81,7 +80,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_2.png"
+                            <a href="img/big_portfolio_item_2.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -99,7 +98,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_3.png"
+                            <a href="img/big_portfolio_item_3.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -117,7 +116,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_1.png"
+                            <a href="img/big_portfolio_item_1.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -135,7 +134,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_5.png"
+                            <a href="img/big_portfolio_item_5.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -153,7 +152,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_6.png"
+                            <a href="img/big_portfolio_item_6.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -171,7 +170,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_7.png"
+                            <a href="img/big_portfolio_item_7.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -189,7 +188,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_8.png"
+                            <a href="img/big_portfolio_item_8.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">
@@ -207,7 +206,7 @@ https://templatemo.com/tm-520-highway
                 <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
                         <div class="thumb">
-                            <a href="javascript:void(0)" data-href="img/big_portfolio_item_9.png"
+                            <a href="img/big_portfolio_item_9.png"
                                 data-lightbox="image-1">
                                 <div class="hover-effect">
                                     <div class="hover-content">

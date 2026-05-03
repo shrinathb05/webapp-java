@@ -76,7 +76,7 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependecy Check') {
+        stage('OWASP Dependency Check') {
             steps {
                 dir("${WORK_DIR}") {
                     withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
