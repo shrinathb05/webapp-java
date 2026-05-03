@@ -39,7 +39,7 @@ pipeline {
             steps {
                 dir("${WORK_DIR}") {
                     echo "Compiling and running the unit tests......."
-                    sh "mvn clean test"
+                    sh "mvn clean verify"
                 }
             }
             post {
