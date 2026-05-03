@@ -28,7 +28,7 @@ pipeline {
                 sh "mkdir -p ${WORK_DIR}"
                 dir("${WORK_DIR}") {
                     sh "rm -rf ./*"
-                    git branch: "${env.GIT_BRANCH}", url: "${env.GIT_REPO}"
+                    clone("${GIT_REPO}","${GIT_BRANCH}")
                     sh "ls -lrt"
                 }
             }
