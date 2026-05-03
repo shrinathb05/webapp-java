@@ -28,7 +28,7 @@ pipeline {
                 sh "mkdir -p ${WORK_DIR}"
                 dir("${WORK_DIR}") {
                     sh "rm -rf ./*"
-                    clone("${GIT_REPO}","${GIT_BRANCH}")
+                    clone("https://github.com/shrinathb05/webapp-java.git","main")
                     sh "ls -lrt"
                 }
             }
