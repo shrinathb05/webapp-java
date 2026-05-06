@@ -1,7 +1,10 @@
+# Base Image
 FROM tomcat:10.1-jdk17-temurin-jammy as builder
 
+# Switch to the root user
 USER root
 
+# Update the latest packages
 RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 
 # Clear it out to make room for your app
