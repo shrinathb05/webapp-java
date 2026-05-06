@@ -1,28 +1,32 @@
 @Library('shared') _
 pipeline {
-    agent { label 'slave-agent' }
-
-    tools {
-        jdk 'jdk-21'
-        maven '3.9.12'
+    agent {
+        label 'agent1'
     }
-
+    
     environment {
-        GIT_REPO = "https://github.com/shrinathb05/webapp-java.git"
-        GIT_BRANCH = "main"
-
+        GIT_REPO = 'https://github.com/shrinathb05/devops-portfolio.git'
+        GIT_BRANCH = 'release'
         SONAR_SERVER_NAME = "sonar-server"
-        OWASP_TOOL_NAME = "owasp-dp-Check"
 
         WAR_NAME = "target/*.war"
         SCAN_REPORT = "target/dependency-check-report.xml"
         WORK_DIR = "/home/ubuntu/var/work/javawebapp"
-        NVD_CRED_ID = 'nvd-api-key'
-
-        APP_VERSION = "0.4" 
-        IMAGE_NAME = "shrinath05/project:javawebapp-${APP_VERSION}"
+        SNYK_TOKEN_SECRET_ID = "dev/snyk/token/snyk-api-token"
+        
+        // WORK_DIR = '/home/ubuntu/var/work/portfolio'
+        TEST_REPORTS_DIR = 'test-reports'
+        TEST_REPORT_FILE = 'test-reports/vitest-junit.xml'
+        SNYK_ORG_ID = 'f687dcdd-f893-40db-847d-bcce9c064a10'
+        
+        // AWS details
+        AWS_ACCOUNT_ID = "356315793521"
+        ECR_REPO_NAME  = "javawebapp"
+        AWS_ECR_REPO = "356315793521.dkr.ecr.us-east-1.amazonaws.com"
+        AWS_REGION = "us-east-1"
+        FULL_IMAGE = "${AWS_ECR_REPO}/${ECR_REPO_NAME}:${env.BUILD_NUMBER}"
     }
-
+    
     stages {
         stage('clean & Checkout') {
             steps {
@@ -34,7 +38,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Build & Test') {
             steps {
                 dir("${WORK_DIR}") {
@@ -50,7 +54,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Sonarqube Analysis') {
             steps {
                 dir("${WORK_DIR}") {
@@ -61,7 +65,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Quality Gate') {
             steps {
                 script {
@@ -75,121 +79,71 @@ pipeline {
                 }
             }
         }
-
-        stage('OWASP Dependency Check') {
+        
+        stage('Snyk Security Scan') {
             steps {
                 dir("${WORK_DIR}") {
-                    withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
-                        script {
-                            dependencyCheck additionalArguments: "--scan ./ --out target --format HTML --format XML --nvdApiKey ${NVD_KEY} --failOnCVSS 8",
-                            odcInstallation: "${env.OWASP_TOOL_NAME}"
-                        }
-                    }
+                      script {
+                        // If using the CLI to fetch manually (Option 1)
+                        def snykToken = sh(script: "aws secretsmanager get-secret-value --secret-id dev/snyk/token/snyk-api-token --query SecretString --output text | jq -r '.\"snyk-api-token\"'", returnStdout: true).trim()
+                        sh "snyk test --token=${snykToken} --severity-threshold=high"
+                    }   
                 }
             }
-            post {
-                always {
+        }
+        
+        stage('Docker Image Build') {
+            steps {
+                script {
+                    // 1. Login to ECR (The modern way)
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        
+                    // 2. Build the Docker Image
                     dir("${WORK_DIR}") {
-                        dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+                        sh "docker build --provenance=false -t ${env.FULL_IMAGE} ."
                     }
                 }
             }
         }
-        
-        stage('Package & Archive Artifacts') {
+
+        stage('Trivy Image Scan') {
             steps {
-                dir("${WORK_DIR}") {
-                    
-                    // Package Artifacts
-                    echo "🏗️ Finalizing WAR package..."
-                    sh "mvn package -DskipTests"
-                    
-                    // Archive Artifacts
-                    echo "📦 Archiving build: ${env.WAR_NAME}"
-                    archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
+                script {
+                    // If using the CLI to fetch manually (Option 1)
+                    sh "trivy image --severity HIGH,CRITICAL --exit-code 1 ${env.FULL_IMAGE}"
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            steps{
+                script {
+                    // 1. Login to ECR (The modern way)
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+                    // 2. Tag the image with 'latest' as well
+                    sh "docker tag ${env.FULL_IMAGE} ${AWS_ECR_REPO}/${ECR_REPO_NAME}:latest"
+
+                    // 2. Push both tags to ECR
+                    sh "docker push ${env.FULL_IMAGE}"
+                    sh "docker push ${AWS_ECR_REPO}/${ECR_REPO_NAME}:latest"
                 }
             }
         }
         
-        stage('Docker Build Image') {
+        stage('Package & Push Artifact') {
             steps {
                 dir("${WORK_DIR}") {
                     script {
-                        withCredentials([usernamePassword(
-                        credentialsId: 'docker_token', 
-                        usernameVariable: 'USER', 
-                        passwordVariable: 'PASS'
-                    )]) {
-                            sh """
-                                echo "Docker image building........"
-                                docker build -t ${env.IMAGE_NAME} .
-                                
-                                echo "Logging into dockerhub .........."
-                                echo $PASS | docker login -u $USER --password-stdin
-                            """
-                        }
-                    }
+                        // Rename and upload so it's always 'app.war' in the cloud
+                        // This stores it at: s3://shrinath-jenkins-artifacts/12/app.war
+                        sh "aws s3 cp target/*.war s3://javawebapp-dev/${env.BUILD_NUMBER}/javawebapp.war"
+                        sh "aws s3 cp target/*.war s3://javawebapp-dev/latest/javawebapp.war"
+                        
+                        echo "Artifact version ${env.BUILD_NUMBER} uploaded successfully as javawebapp.war"
+                    }   
                 }
             }
-        }
-        
-        stage('Docker Image Scan') {
-            steps {
-                dir("${WORK_DIR}") {
-                    // --exit-code 1 tells Jenkins to FAIL the build if vulnerabilities are found
-                    // --severity CRITICAL ensures we only stop for the worst bugs
-                    sh "trivy image --exit-code 1 --severity CRITICAL ${env.IMAGE_NAME}"
-                }
-            }
-        }
-        
-        stage('Docker Image Push') {
-            steps {
-                dir("${WORK_DIR}") {
-                    script {
-                        withCredentials([usernamePassword(
-                        credentialsId: 'docker_token', 
-                        usernameVariable: 'USER', 
-                        passwordVariable: 'PASS'
-                    )]) {
-                            sh """
-                                echo "Pushing image to dockerhub......"
-                                docker push ${env.IMAGE_NAME}
-                                
-                                # It removes all images that are not being used by a running container
-                                docker image prune -a -f
-                                docker logout
-                            """
-                        }  
-                    }
-                }
-            }
-        }
-        
-        stage('cleanup') {
-            steps {
-                dir("${WORK_DIR}") {
-                    sh "rm -rf ./*"
-                    sh "ls -lrt"
-                }
-            }
-        }
-    }
-    
-    post {
-        success {
-            emailext (
-                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: "Build successful! Check it here: ${env.BUILD_URL}",
-                to: 'email123@gmail.com' // CHANGE THIS
-            )
-        }
-        failure {
-            emailext (
-                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: "Pipeline failed. Check the logs: ${env.BUILD_URL}",
-                to: 'semail123@gmail.com' // CHANGE THIS
-            )
         }
     }
 }
