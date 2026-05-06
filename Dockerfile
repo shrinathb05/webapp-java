@@ -1,4 +1,8 @@
-FROM tomcat:10.1-jdk17-temurin-jammy
+FROM tomcat:10.1-jdk17-temurin-jammy as builder
+
+USER root
+
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 
 # Clear it out to make room for your app
 RUN rm -rf /usr/local/tomcat/webapps/*
