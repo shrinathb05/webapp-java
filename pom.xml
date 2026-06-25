@@ -30,7 +30,7 @@
    
   </dependencies>
   <build>
-    <finalName>maven-web-app/finalName>
+    <finalName>javawebapp</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
