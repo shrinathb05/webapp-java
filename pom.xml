@@ -68,16 +68,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <distrbutionManagement>
-	<repository>
-		<id>maven-releases</id>
-		<url>http://10.181.63.246:8081/repository/maven-releases/</url>
-	</repository>
-	<snapshotRepository>
-		<id>maven-snapshots</id>
-		<url>http://10.181.63.246:8081/repository/maven-snapshots/</url>
-	</snapshotRepository>
-</distrbutionManagement>
-  
 </project>
