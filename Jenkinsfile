@@ -171,6 +171,7 @@ pipeline {
                 Regards,
                 Jenkins CI/CD Automation
                 """
+                attachLog: true
             }
             
             failure {
@@ -192,12 +193,13 @@ pipeline {
                 Regards,
                 Jenkins CI/CD Automation
             """
+                attachLog: true
         }
         
         always {
             echo "Cleaning up the Jenkins build workspace..."
             // This wipes out the build workspace directory on the execution agent
-            cleanWs() 
+            // cleanWs() 
         }
     }
 }
