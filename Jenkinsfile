@@ -67,15 +67,26 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check') {
+        stage('Snyk Security Scan') {
             steps {
-                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
-                    script {
-                        dependencyCheck additionalArguments: "--scan ./ --out target --format HTML --format XML --nvdApiKey ${NVD_KEY} --failOnCVSS 8",
-                        odcInstallation: "${env.OWASP_TOOL_NAME}"
-                    }
-                }
+                snykSecurity(
+                    snykInstallation: 'snyk',
+                    tokenCredentialId: 'SNYK_API_TOKEN',
+                    failOnBuild: true, // Fails the pipeline if vulnerabilities are found
+                    monitor: true      // Continuous monitoring: pushes a snapshot of dependencies to Snyk Dashboard
+                )
             }
         }
+
+        // stage('OWASP Dependency Check') {
+        //     steps {
+        //         withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
+        //             script {
+        //                 dependencyCheck additionalArguments: "--scan ./ --out target --format HTML --format XML --nvdApiKey ${NVD_KEY} --failOnCVSS 8",
+        //                 odcInstallation: "${env.OWASP_TOOL_NAME}"
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
