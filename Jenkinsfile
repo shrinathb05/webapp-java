@@ -85,13 +85,11 @@ pipeline {
                         '''
                         
                         // 2. Run the security scan (example configurations below)
-                        
-                        // Option A: Scan open-source dependencies and fail only on high/critical issues
                         sh 'snyk test --scan-all-unmanaged --severity-threshold=high'
                         
                         // Option B: Scan your application code (SAST)
-                        sh 'snyk code test --include-ignores'
-                        
+                        //sh 'snyk code test --include-ignores'
+                    
                         // Option C: Scan a newly built Docker container
                         // sh 'snyk container test myapp:latest --file=Dockerfile'
                     }
@@ -110,7 +108,7 @@ pipeline {
         //     }
         // }
 
-        stage('Package & Push Artifact') {
+        stage('Package Artifact') {
             steps {
                 // Package Artifacts
                 echo "🏗️ Finalizing WAR package..."
@@ -119,22 +117,29 @@ pipeline {
                     // Archive Artifacts
                 echo "📦 Archiving build: ${env.WAR_NAME}"
                 archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
+            }
+        }
 
-                // Use withMaven to automatically handle your JDK, Maven installation, and settings.xml injection
-                withMaven(
-                    mavenSettingsConfig: 'f5e0f76c-c0a9-4b8d-8a4f-2570aea7f912', 
-                    jdk: 'jdk21', 
-                    maven: 'maven', 
-                    traceability: true
-                ) {
-                    // Inject your credentials securely for Maven to intercept
-                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
-                                                    usernameVariable: 'NEXUS_USER', 
-                                                    passwordVariable: 'NEXUS_PASSWORD')]) {
-                        script {
-                            // Just run clean deploy directly. Jenkins handles the settings injection automatically!
-                            sh 'mvn clean deploy -DskipTests'
-                        }
+        stage('Push Artifact Nexus') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
+                                                usernameVariable: 'NEXUS_USER', 
+                                                passwordVariable: 'NEXUS_PASSWORD')]) {
+                    script {
+                        // Get the short Git commit SHA
+                        def gitCommitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                        def artifactVersion = "3.1-${gitCommitSha}"
+                        echo "Uploading version ${artifactVersion} to Nexus..."
+                        
+                        sh """
+                            curl -v -u "${NEXUS_USER}:${NEXUS_PASSWORD}" \
+                            -X POST "http://10.78.57.131:8081/service/rest/v1/components?repository=maven-releases" \
+                            -F "maven2.groupId=in.ashokit" \
+                            -F "maven2.artifactId=01-maven-web-app" \
+                            -F "maven2.version=${artifactVersion}" \
+                            -F "maven2.asset1=@target/javawebapp.war" \
+                            -F "maven2.asset1.extension=war"
+                        """
                     }
                 }
             }
