@@ -6,6 +6,7 @@ pipeline {
         jdk 'jdk21'
         maven 'maven'
         // SNYK_HOME = tool 'snyk'
+        nodejs 'nodejs'
     }
 
     environment {
