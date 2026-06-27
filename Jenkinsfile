@@ -43,5 +43,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Sonarqube Analysis') {
+            steps {
+                withSonarQubeEnv("${env.SONAR_SERVER_NAME}") {
+                    echo "Performing sonarqube analysis for the code......"
+                    sh "mvn sonar:sonar"
+                }
+            }
+        }
     }
 }
