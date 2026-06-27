@@ -71,7 +71,7 @@ pipeline {
         stage('Snyk Vulnerability Scan') {
             steps {
                 // Binds your secret token safely into an environment variable
-                withCredentials([string(credentialsId: 'SNYK_API_TOKEN', variable: 'SNYK_TOKEN')]) {
+                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
                     script {
                         // 1. Install Snyk CLI globally on the agent node (if not already baked into the agent image)
                         sh 'npm install -g snyk'
