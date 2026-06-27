@@ -1,6 +1,8 @@
 @Library('shared@main') _
 pipeline {
-    agent any
+    agent {
+        label 'agent'
+    }
 
     tools {
         jdk 'jdk21'
@@ -190,6 +192,12 @@ pipeline {
                 Regards,
                 Jenkins CI/CD Automation
             """
+        }
+        
+        always {
+            echo "Cleaning up the Jenkins build workspace..."
+            // This wipes out the build workspace directory on the execution agent
+            cleanWs() 
         }
     }
 }
