@@ -137,7 +137,7 @@ pipeline {
                             -F "maven2.groupId=in.ashokit" \
                             -F "maven2.artifactId=01-maven-web-app" \
                             -F "maven2.version=${artifactVersion}" \
-                            -F "maven2.asset1=@target/javawebapp.war" \
+                            -F "maven2.asset1=@target/*.war" \
                             -F "maven2.asset1.extension=war"
                         """
                     }
