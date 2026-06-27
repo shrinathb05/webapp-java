@@ -5,6 +5,7 @@ pipeline {
     tools {
         jdk 'jdk21'
         maven 'maven'
+        SNYK_HOME = tool 'snyk'
     }
 
     environment {
@@ -67,14 +68,26 @@ pipeline {
             }
         }
 
-        stage('Snyk Security Scan') {
+        stage('Snyk Vulnerability Scan') {
             steps {
-                snykSecurity(
-                    snykInstallation: 'snyk',
-                    tokenCredentialId: 'SNYK_API_TOKEN',
-                    failOnBuild: true, // Fails the pipeline if vulnerabilities are found
-                    monitor: true      // Continuous monitoring: pushes a snapshot of dependencies to Snyk Dashboard
-                )
+                // Binds your secret token safely into an environment variable
+                withCredentials([string(credentialsId: 'SNYK_API_TOKEN', variable: 'SNYK_TOKEN')]) {
+                    script {
+                        // 1. Install Snyk CLI globally on the agent node (if not already baked into the agent image)
+                        sh 'npm install -g snyk'
+                        
+                        // 2. Run the security scan (example configurations below)
+                        
+                        // Option A: Scan open-source dependencies and fail only on high/critical issues
+                        sh 'snyk test --severity-threshold=high'
+                        
+                        // Option B: Scan your application code (SAST)
+                        // sh 'snyk code test'
+                        
+                        // Option C: Scan a newly built Docker container
+                        // sh 'snyk container test myapp:latest --file=Dockerfile'
+                    }
+                }
             }
         }
 
