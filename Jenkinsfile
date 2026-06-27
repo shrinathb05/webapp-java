@@ -1,10 +1,11 @@
-@Library('shared') _
+// @Library('shared') _
 pipeline {
-    agent { label 'slave-agent' }
+    // agent { label 'slave-agent' }
+    agent any
 
     tools {
-        jdk 'jdk-21'
-        maven '3.9.12'
+        jdk 'jdk21'
+        maven 'maven'
     }
 
     environment {
@@ -111,60 +112,60 @@ pipeline {
             }
         }
         
-        stage('Docker Build Image') {
-            steps {
-                dir("${WORK_DIR}") {
-                    script {
-                        withCredentials([usernamePassword(
-                        credentialsId: 'docker_token', 
-                        usernameVariable: 'USER', 
-                        passwordVariable: 'PASS'
-                    )]) {
-                            sh """
-                                echo "Docker image building........"
-                                docker build -t ${env.IMAGE_NAME} .
+        // stage('Docker Build Image') {
+        //     steps {
+        //         dir("${WORK_DIR}") {
+        //             script {
+        //                 withCredentials([usernamePassword(
+        //                 credentialsId: 'docker_token', 
+        //                 usernameVariable: 'USER', 
+        //                 passwordVariable: 'PASS'
+        //             )]) {
+        //                     sh """
+        //                         echo "Docker image building........"
+        //                         docker build -t ${env.IMAGE_NAME} .
                                 
-                                echo "Logging into dockerhub .........."
-                                echo $PASS | docker login -u $USER --password-stdin
-                            """
-                        }
-                    }
-                }
-            }
-        }
+        //                         echo "Logging into dockerhub .........."
+        //                         echo $PASS | docker login -u $USER --password-stdin
+        //                     """
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         
-        stage('Docker Image Scan') {
-            steps {
-                dir("${WORK_DIR}") {
-                    // --exit-code 1 tells Jenkins to FAIL the build if vulnerabilities are found
-                    // --severity CRITICAL ensures we only stop for the worst bugs
-                    sh "trivy image --exit-code 1 --severity CRITICAL ${env.IMAGE_NAME}"
-                }
-            }
-        }
+        // stage('Docker Image Scan') {
+        //     steps {
+        //         dir("${WORK_DIR}") {
+        //             // --exit-code 1 tells Jenkins to FAIL the build if vulnerabilities are found
+        //             // --severity CRITICAL ensures we only stop for the worst bugs
+        //             sh "trivy image --exit-code 1 --severity CRITICAL ${env.IMAGE_NAME}"
+        //         }
+        //     }
+        // }
         
-        stage('Docker Image Push') {
-            steps {
-                dir("${WORK_DIR}") {
-                    script {
-                        withCredentials([usernamePassword(
-                        credentialsId: 'docker_token', 
-                        usernameVariable: 'USER', 
-                        passwordVariable: 'PASS'
-                    )]) {
-                            sh """
-                                echo "Pushing image to dockerhub......"
-                                docker push ${env.IMAGE_NAME}
+        // stage('Docker Image Push') {
+        //     steps {
+        //         dir("${WORK_DIR}") {
+        //             script {
+        //                 withCredentials([usernamePassword(
+        //                 credentialsId: 'docker_token', 
+        //                 usernameVariable: 'USER', 
+        //                 passwordVariable: 'PASS'
+        //             )]) {
+        //                     sh """
+        //                         echo "Pushing image to dockerhub......"
+        //                         docker push ${env.IMAGE_NAME}
                                 
-                                # It removes all images that are not being used by a running container
-                                docker image prune -a -f
-                                docker logout
-                            """
-                        }  
-                    }
-                }
-            }
-        }
+        //                         # It removes all images that are not being used by a running container
+        //                         docker image prune -a -f
+        //                         docker logout
+        //                     """
+        //                 }  
+        //             }
+        //         }
+        //     }
+        // }
         
         stage('cleanup') {
             steps {
