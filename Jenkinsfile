@@ -122,24 +122,22 @@ pipeline {
 
         stage('Push Artifact Nexus') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
-                                                usernameVariable: 'NEXUS_USER', 
-                                                passwordVariable: 'NEXUS_PASSWORD')]) {
-                    script {
-                        // Get the short Git commit SHA
-                        def gitCommitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                        def artifactVersion = "3.1-${gitCommitSha}"
-                        echo "Uploading version ${artifactVersion} to Nexus..."
-                        
-                        sh """
-                            curl -v -u "${NEXUS_USER}:${NEXUS_PASSWORD}" \
-                            -X POST "http://10.78.57.131:8081/service/rest/v1/components?repository=maven-releases" \
-                            -F "maven2.groupId=in.ashokit" \
-                            -F "maven2.artifactId=01-maven-web-app" \
-                            -F "maven2.version=${artifactVersion}" \
-                            -F "maven2.asset1=@target/javawebapp.war" \
-                            -F "maven2.asset1.extension=war"
-                        """
+                
+                // Use withMaven to automatically handle your JDK, Maven installation, and settings.xml injection
+                withMaven(
+                    mavenSettingsConfig: 'f5e0f76c-c0a9-4b8d-8a4f-2570aea7f912', 
+                    jdk: 'jdk21', 
+                    maven: 'maven', 
+                    traceability: true
+                ) {
+                    // Inject your credentials securely for Maven to intercept
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
+                                                    usernameVariable: 'NEXUS_USER', 
+                                                    passwordVariable: 'NEXUS_PASSWORD')]) {
+                        script {
+                            // Just run clean deploy directly. Jenkins handles the settings injection automatically!
+                            sh 'mvn clean deploy -DskipTests'
+                        }
                     }
                 }
             }
