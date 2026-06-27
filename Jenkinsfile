@@ -74,14 +74,15 @@ pipeline {
                 // Binds your secret token safely into an environment variable
                 withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
                     script {
-
-                        // install snyk and check if already there or not
-                        if ! command -v snyk &> /dev/null; then
-                            echo "Snyk not found. Installing..."
-                            npm install -g snyk
-                        else
-                            echo "Snyk is already installed! Skipping installation."
-                        fi
+                        sh '''
+                            # Install snyk and check if already there or not
+                            if ! command -v snyk &> /dev/null; then
+                                echo "Snyk not found. Installing..."
+                                npm install -g snyk
+                            else
+                                echo "Snyk is already installed! Skipping installation."
+                            fi
+                        '''
                         
                         // 2. Run the security scan (example configurations below)
                         
