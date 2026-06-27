@@ -1,8 +1,9 @@
 @Library('shared@main') _
 pipeline {
-    agent {
-        label 'agent'
-    }
+    // agent {
+    //     label 'agent'
+    // }
+    agent any
 
     tools {
         jdk 'jdk21'
