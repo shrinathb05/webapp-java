@@ -31,5 +31,19 @@ pipeline {
                 sh 'ls -lrt'
             }
         }
+
+        stage('Build & Test') {
+            steps {
+                echo "Compiling and running the unit tests......."
+                sh "mvn clean verify"
+            }
+            post {
+                always {
+                    {
+                        junit '**/target/surefire-reports/*.xml'
+                    }
+                }
+            }
+        }
     }
 }
