@@ -71,22 +71,18 @@ pipeline {
 
         stage('Snyk Vulnerability Scan') {
             steps {
-                // Binds your secret token safely into an environment variable
-                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                withCredentials([snykToken(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
                     script {
-                        // 1. Install Snyk CLI globally on the agent node (if not already baked into the agent image)
-                        sh 'npm install -g snyk'
+                        // Download the official compiled standalone binary
+                        sh 'curl --compressed https://static.snyk.io/cli/latest/snyk-linux -o snyk'
                         
-                        // 2. Run the security scan (example configurations below)
+                        // Make it executable
+                        sh 'chmod +x ./snyk'
                         
-                        // Option A: Scan open-source dependencies and fail only on high/critical issues
-                        sh 'snyk test --severity-threshold=high'
-                        
+                        // Run your scans using ./snyk instead of snyk
+                        sh './snyk test --severity-threshold=high'
                         // Option B: Scan your application code (SAST)
-                        // sh 'snyk code test'
-                        
-                        // Option C: Scan a newly built Docker container
-                        // sh 'snyk container test myapp:latest --file=Dockerfile'
+                        sh 'snyk code test'
                     }
                 }
             }
