@@ -74,13 +74,19 @@ pipeline {
                 // Binds your secret token safely into an environment variable
                 withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
                     script {
-                        // 1. Install Snyk CLI globally on the agent node (if not already baked into the agent image)
-                        sh 'npm install -g snyk'
+
+                        // install snyk and check if already there or not
+                        if ! command -v snyk &> /dev/null; then
+                            echo "Snyk not found. Installing..."
+                            npm install -g snyk
+                        else
+                            echo "Snyk is already installed! Skipping installation."
+                        fi
                         
                         // 2. Run the security scan (example configurations below)
                         
                         // Option A: Scan open-source dependencies and fail only on high/critical issues
-                        sh 'snyk test --severity-threshold=high'
+                        sh 'snyk test --scan-all-unmanaged --severity-threshold=high'
                         
                         // Option B: Scan your application code (SAST)
                         sh 'snyk code test'
