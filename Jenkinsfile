@@ -136,7 +136,7 @@ pipeline {
                         script {
                             // Just run clean deploy directly. Jenkins handles the settings injection automatically!
                             // sh 'mvn clean deploy -DskipTests'
-                            sh 'mvn clean deploy -DskipTests -DaltDeploymentRepository=nexus-snapshots::default::http://10.78.57.131:8081/repository/maven-snapshots/'
+                            sh 'mvn clean deploy -DskipTests -DaltDeploymentRepository=maven-snapshots::default::http://10.78.57.131:8081/repository/maven-snapshots/'
                         }
                     }
                 }
