@@ -109,5 +109,17 @@ pipeline {
         //         }
         //     }
         // }
+
+        stage('Package & Push Artifact') {
+            steps {
+                // Package Artifacts
+                echo "🏗️ Finalizing WAR package..."
+                sh "mvn package -DskipTests"
+                    
+                    // Archive Artifacts
+                echo "📦 Archiving build: ${env.WAR_NAME}"
+                archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
+            }
+        }
     }
 }
