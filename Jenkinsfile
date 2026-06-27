@@ -153,7 +153,7 @@ pipeline {
     post {
             success {
                 emailtext(
-                    mail to: 'shrinath7028@gmail.com',
+                     to: 'shrinath7028@gmail.com',
                      subject: "SUCCESS: Jenkins Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
                      body: """Team,
     
@@ -178,7 +178,7 @@ pipeline {
             
             failure {
                 emailtext(
-                    mail to: 'shrinath7028@gmail.com',
+                         to: 'shrinath7028@gmail.com',
                          subject: "FAILURE: Jenkins Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
                          body: """Team,
             
