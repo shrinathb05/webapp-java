@@ -138,8 +138,8 @@ pipeline {
                             // sh 'mvn clean deploy -DskipTests'
                             def releaseVersion = "1.0.${env.BUILD_NUMBER}"
                             sh "mvn versions:set -DnewVersion=${releaseVersion}"
-                            sh 'mvn clean deploy -DskipTests -DaltDeploymentRepository=maven-snapshots::default::http://10.78.57.131:8081/repository/maven-snapshots/'
-                            // sh "mvn clean deploy -DskipTests -DaltDeploymentRepository=maven-snapshots::http://10.78.57.131:8081/repository/maven-snapshots/"
+                            // sh 'mvn clean deploy -DskipTests -DaltDeploymentRepository=maven-snapshots::default::http://10.78.57.131:8081/repository/maven-snapshots/'
+                            sh "mvn clean deploy -DskipTests -DaltDeploymentRepository=maven-releases::http://10.78.57.131:8081/repository/maven-releases/"
                         }
                     }
                 }
