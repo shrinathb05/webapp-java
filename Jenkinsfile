@@ -120,12 +120,21 @@ pipeline {
                 echo "📦 Archiving build: ${env.WAR_NAME}"
                 archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
 
-                withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
-                                          usernameVariable: 'NEXUS_USER', 
-                                          passwordVariable: 'NEXUS_PASSWORD')]) {
-                    script {
-                        // Pass the local settings.xml configuration directly into the maven run
-                        sh 'mvn -s settings.xml clean deploy -DskipTests'
+                // Use withMaven to automatically handle your JDK, Maven installation, and settings.xml injection
+                withMaven(
+                    mavenSettingsConfig: 'f5e0f76c-c0a9-4b8d-8a4f-2570aea7f912', 
+                    jdk: 'jdk21', 
+                    maven: 'maven', 
+                    traceability: true
+                ) {
+                    // Inject your credentials securely for Maven to intercept
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
+                                                    usernameVariable: 'NEXUS_USER', 
+                                                    passwordVariable: 'NEXUS_PASSWORD')]) {
+                        script {
+                            // Just run clean deploy directly. Jenkins handles the settings injection automatically!
+                            sh 'mvn clean deploy -DskipTests'
+                        }
                     }
                 }
             }
