@@ -203,7 +203,7 @@ pipeline {
         always {
             echo "Cleaning up the Jenkins build workspace..."
             // This wipes out the build workspace directory on the execution agent
-            // cleanWs() 
+            cleanWs() 
         }
     }
 }
