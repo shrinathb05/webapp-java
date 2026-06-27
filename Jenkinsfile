@@ -146,4 +146,50 @@ pipeline {
             }
         }
     }
+
+    post {
+        
+            success {
+                mail to: 'shrinath7028@gmail.com',
+                 subject: "SUCCESS: Jenkins Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                 body: """Team,
+
+                The pipeline completed successfully!
+                
+                --------------------------------------------------
+                BUILD DETAILS
+                --------------------------------------------------
+                Job Name:      ${env.JOB_NAME}
+                Build Number:  #${env.BUILD_NUMBER}
+                Artifact:      01-maven-web-app
+                Version:       1.0.${env.BUILD_NUMBER}
+                Nexus Status:  Uploaded successfully to maven-releases
+                Build URL:     ${env.BUILD_URL}
+                
+                Regards,
+                Jenkins CI/CD Automation
+                """
+            }
+            
+            failure {
+                mail to: 'shrinath7028@gmail.com',
+                     subject: "FAILURE: Jenkins Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                     body: """Team,
+        
+                The pipeline build has FAILED.
+                
+                --------------------------------------------------
+                FAILURE DETAILS
+                --------------------------------------------------
+                Job Name:      ${env.JOB_NAME}
+                Build Number:  #${env.BUILD_NUMBER}
+                Log URL:       ${env.BUILD_URL}console
+                
+                Please check the console logs to investigate the failure.
+                
+                Regards,
+                Jenkins CI/CD Automation
+            """
+        }
+    }
 }
