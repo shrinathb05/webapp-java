@@ -90,7 +90,7 @@ pipeline {
                         sh 'snyk test --scan-all-unmanaged --severity-threshold=high'
                         
                         // Option B: Scan your application code (SAST)
-                        sh 'snyk code test'
+                        sh 'snyk code test --include-ignores'
                         
                         // Option C: Scan a newly built Docker container
                         // sh 'snyk container test myapp:latest --file=Dockerfile'
@@ -119,6 +119,15 @@ pipeline {
                     // Archive Artifacts
                 echo "📦 Archiving build: ${env.WAR_NAME}"
                 archiveArtifacts artifacts: "${env.WAR_NAME}", fingerprint: true
+
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials-id', 
+                                          usernameVariable: 'NEXUS_USER', 
+                                          passwordVariable: 'NEXUS_PASSWORD')]) {
+                    script {
+                        // Pass the local settings.xml configuration directly into the maven run
+                        sh 'mvn -s settings.xml clean deploy -DskipTests'
+                    }
+                }
             }
         }
     }
