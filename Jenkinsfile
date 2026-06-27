@@ -66,5 +66,16 @@ pipeline {
                 }
             }
         }
+
+        stage('OWASP Dependency Check') {
+            steps {
+                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
+                    script {
+                        dependencyCheck additionalArguments: "--scan ./ --out target --format HTML --format XML --nvdApiKey ${NVD_KEY} --failOnCVSS 8",
+                        odcInstallation: "${env.OWASP_TOOL_NAME}"
+                    }
+                }
+            }
+        }
     }
 }
