@@ -4,8 +4,8 @@
   <groupId>in.ashokit</groupId>
   <artifactId>01-maven-web-app</artifactId>
   <packaging>war</packaging>
-  <version>3.0-RELEASE</version>
-  <name>01-maven-web-app</name>
+  <version>0.1-SNAPSHOT</version>
+  <name>javawebapp</name>
   <url>http://maven.apache.org</url>
 
   <properties>
